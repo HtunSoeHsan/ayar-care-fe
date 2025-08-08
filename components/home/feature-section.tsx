@@ -1,45 +1,48 @@
 import { Leaf, Search, Sparkles, Shield, Zap, BookOpen } from 'lucide-react';
-
-const features = [
-  {
-    icon: Leaf,
-    title: "Plant Disease Detection",
-    description: "Upload photos of your plants to identify diseases with our advanced AI-powered detection system."
-  },
-  {
-    icon: Sparkles,
-    title: "Treatment Recommendations",
-    description: "Get personalized treatment plans and organic solutions to combat plant diseases effectively."
-  },
-  {
-    icon: Search,
-    title: "Healthy Food Database",
-    description: "Search our extensive database of healthy foods and learn about their nutritional benefits."
-  },
-  {
-    icon: Shield,
-    title: "Preventive Care Tips",
-    description: "Access expert advice on preventive measures to keep your plants disease-free year-round."
-  },
-  {
-    icon: Zap,
-    title: "Instant Results",
-    description: "Receive disease identification and treatment recommendations in seconds, not days."
-  },
-  {
-    icon: BookOpen,
-    title: "Educational Resources",
-    description: "Browse our library of articles and guides about plant health, diseases, and organic gardening."
-  }
-];
+import { useTranslations } from 'next-intl';
 
 const FeatureSection = () => {
+  const t = useTranslations('home.features');
+  
+  const features = [
+    {
+      icon: Leaf,
+      title: t('diseaseDetection'),
+      description: t('diseaseDetectionDesc')
+    },
+    {
+      icon: Sparkles,
+      title: t('treatment'),
+      description: t('treatmentDesc')
+    },
+    {
+      icon: Search,
+      title: t('healthyFoodDatabase'),
+      description: t('healthyFoodDatabaseDesc')
+    },
+    {
+      icon: Shield,
+      title: t('preventiveCare'),
+      description: t('preventiveCareDesc')
+    },
+    {
+      icon: Zap,
+      title: t('instantResults'),
+      description: t('instantResultsDesc')
+    },
+    {
+      icon: BookOpen,
+      title: t('educationalResources'),
+      description: t('educationalResourcesDesc')
+    }
+  ];
+
   return (
     <section className="container py-12">
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <h2 className="text-3xl font-bold tracking-tight mb-4">Key Features</h2>
+        <h2 className="text-3xl font-bold tracking-tight mb-4">{t('keyFeatures')}</h2>
         <p className="text-muted-foreground">
-          AyarCare offers comprehensive tools to identify plant diseases and promote plant health through advanced technology and expert recommendations.
+          {t('comprehensiveTools')}
         </p>
       </div>
       

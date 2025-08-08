@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Leaf, 
-  Beaker, 
+import {
+  ChevronDown,
+  ChevronUp,
+  Leaf,
+  Beaker,
   ExternalLink,
   Search,
   Filter
@@ -27,6 +27,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Badge } from '@/components/ui/badge';
+import { getLocalizedProperty } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 const medicines = {
   organic: [
@@ -115,10 +117,11 @@ export default function MedicinesPage() {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const locale = useLocale();
 
   const toggleExpanded = (id: string) => {
-    setExpandedItems(prev => 
-      prev.includes(id) 
+    setExpandedItems(prev =>
+      prev.includes(id)
         ? prev.filter(item => item !== id)
         : [...prev, id]
     );
@@ -133,9 +136,9 @@ export default function MedicinesPage() {
   };
 
   const filteredMedicines = [...medicines.organic, ...medicines.conventional]
-    .filter(medicine => 
-      (searchTerm === '' || 
-        medicine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    .filter(medicine =>
+      (searchTerm === '' ||
+        getLocalizedProperty(medicine.name, locale).toLowerCase().includes(searchTerm.toLowerCase()) ||
         medicine.category.toLowerCase().includes(searchTerm.toLowerCase())
       ) &&
       (selectedTypes.length === 0 || selectedTypes.includes(medicine.type))
@@ -192,7 +195,7 @@ export default function MedicinesPage() {
                 <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
                   <Image
                     src={medicine.image}
-                    alt={medicine.name}
+                    alt={getLocalizedProperty(medicine.name, locale)}
                     fill
                     className="object-cover"
                   />
@@ -212,8 +215,8 @@ export default function MedicinesPage() {
                     )}
                     <Badge variant="outline">{medicine.category}</Badge>
                   </div>
-                  <h3 className="text-xl font-semibold mb-1">{medicine.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{medicine.description}</p>
+                  <h3 className="text-xl font-semibold mb-1">{getLocalizedProperty(medicine.name, locale)}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">{getLocalizedProperty(medicine.description, locale)}</p>
                   <CollapsibleTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
                       {expandedItems.includes(medicine.id) ? (
@@ -238,20 +241,20 @@ export default function MedicinesPage() {
                     <div className="space-y-2">
                       <h4 className="font-medium">Application Details</h4>
                       <div className="text-sm grid gap-1">
-                        <p><span className="font-medium">Active Ingredient:</span> {medicine.active_ingredient}</p>
-                        <p><span className="font-medium">Application Method:</span> {medicine.application}</p>
-                        <p><span className="font-medium">Frequency:</span> {medicine.frequency}</p>
-                        <p><span className="font-medium">Waiting Period:</span> {medicine.waiting_period}</p>
+                        <p><span className="font-medium">Active Ingredient:</span> {getLocalizedProperty(medicine.active_ingredient, locale)}</p>
+                        <p><span className="font-medium">Application Method:</span> {getLocalizedProperty(medicine.application, locale)}</p>
+                        <p><span className="font-medium">Frequency:</span> {getLocalizedProperty(medicine.frequency, locale)}</p>
+                        <p><span className="font-medium">Waiting Period:</span> {getLocalizedProperty(medicine.waiting_period, locale)}</p>
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <h4 className="font-medium">Safety Information</h4>
                       <div className="text-sm grid gap-1">
-                        <p><span className="font-medium">Precautions:</span> {medicine.precautions}</p>
-                        <p><span className="font-medium">Things to Avoid:</span> {medicine.avoid}</p>
-                        <p><span className="font-medium">Storage:</span> {medicine.storage}</p>
-                        <p><span className="font-medium">Expiry:</span> {medicine.expiry}</p>
+                        <p><span className="font-medium">Precautions:</span> {getLocalizedProperty(medicine.precautions, locale)}</p>
+                        <p><span className="font-medium">Things to Avoid:</span> {getLocalizedProperty(medicine.avoid, locale)}</p>
+                        <p><span className="font-medium">Storage:</span> {getLocalizedProperty(medicine.storage, locale)}</p>
+                        <p><span className="font-medium">Expiry:</span> {getLocalizedProperty(medicine.expiry, locale)}</p>
                       </div>
                     </div>
                   </div>
@@ -259,9 +262,9 @@ export default function MedicinesPage() {
                   <div className="space-y-2">
                     <h4 className="font-medium">Additional Information</h4>
                     <div className="text-sm grid gap-1">
-                      <p><span className="font-medium">Suitable For:</span> {medicine.suitable_for.join(', ')}</p>
-                      <p><span className="font-medium">Environmental Impact:</span> {medicine.environmental_impact}</p>
-                      <p><span className="font-medium">Certification:</span> {medicine.certification}</p>
+                      <p><span className="font-medium">Suitable For:</span> {medicine.suitable_for.map(item => getLocalizedProperty(item, locale)).join(', ')}</p>
+                      <p><span className="font-medium">Environmental Impact:</span> {getLocalizedProperty(medicine.environmental_impact, locale)}</p>
+                      <p><span className="font-medium">Certification:</span> {getLocalizedProperty(medicine.certification, locale)}</p>
                     </div>
                   </div>
 

@@ -18,6 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTranslations } from 'next-intl';
+import { getLocalizedProperty } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 interface Medicine {
   name: string;
@@ -53,6 +56,11 @@ interface ScanResultsProps {
 }
 
 const ScanResults = ({ results, image }: ScanResultsProps) => {
+  const t = useTranslations('scanResults');
+  const tMedicine = useTranslations('scanResults.medicine');
+  const tTreatment = useTranslations('scanResults.treatment');
+  const tPrevention = useTranslations('scanResults.prevention');
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState("overview");
   
   const getConfidenceColor = (confidence: number) => {
@@ -63,18 +71,23 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
   
   const confidenceColor = getConfidenceColor(results.disease.confidence);
   
+  // Localize disease name and description
+  const localizedDiseaseName = getLocalizedProperty(results.disease.name, locale);
+  const localizedDiseaseDescription = getLocalizedProperty(results.disease.description, locale);
+  const localizedDiseaseCause = getLocalizedProperty(results.disease.cause, locale);
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold">Scan Results</h3>
+        <h3 className="text-xl font-semibold">{t('title')}</h3>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="gap-1">
             <Share2 className="h-4 w-4" />
-            Share
+            {t('share')}
           </Button>
           <Button variant="outline" size="sm" className="gap-1">
             <DownloadCloud className="h-4 w-4" />
-            Save
+            {t('save')}
           </Button>
         </div>
       </div>
@@ -96,43 +109,43 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
         <div className="space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant="outline"
                 className={confidenceColor}
               >
-                {Math.round(results.disease.confidence * 100)}% confidence
+                {Math.round(results.disease.confidence * 100)}% {t('confidence')}
               </Badge>
               
               {results.disease.confidence >= 0.85 ? (
                 <Badge variant="outline" className="bg-green-500/10 text-green-500">
                   <CheckCircle2 className="h-3 w-3 mr-1" />
-                  High confidence
+                  {t('highConfidence')}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500">
                   <AlertTriangle className="h-3 w-3 mr-1" />
-                  Medium confidence
+                  {t('mediumConfidence')}
                 </Badge>
               )}
             </div>
             
-            <h2 className="text-2xl font-bold mb-1">{results.disease.name}</h2>
-            <p className="text-sm text-muted-foreground">{results.disease.description}</p>
+            <h2 className="text-2xl font-bold mb-1">{localizedDiseaseName}</h2>
+            <p className="text-sm text-muted-foreground">{localizedDiseaseDescription}</p>
           </div>
           
           <Tabs defaultValue="overview" onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="treatment">Treatment</TabsTrigger>
-              <TabsTrigger value="medicine">Medicine</TabsTrigger>
-              <TabsTrigger value="prevention">Prevention</TabsTrigger>
+              <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+              <TabsTrigger value="treatment">{tTreatment('title')}</TabsTrigger>
+              <TabsTrigger value="medicine">{tMedicine('title')}</TabsTrigger>
+              <TabsTrigger value="prevention">{tPrevention('title')}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="p-4 border rounded-md mt-2">
-              <h3 className="font-medium mb-2">Cause</h3>
-              <p className="text-sm text-muted-foreground mb-4">{results.disease.cause}</p>
+              <h3 className="font-medium mb-2">{t('cause')}</h3>
+              <p className="text-sm text-muted-foreground mb-4">{localizedDiseaseCause}</p>
               
-              <h3 className="font-medium mb-2">Symptoms</h3>
+              <h3 className="font-medium mb-2">{t('symptoms')}</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
                 <li>Brown spots with concentric rings on leaves</li>
                 <li>Yellowing around the lesions</li>
@@ -144,19 +157,19 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
             
             <TabsContent value="treatment" className="p-4 border rounded-md mt-2">
               <div className="mb-4">
-                <h3 className="font-medium mb-2">Organic Treatment</h3>
+                <h3 className="font-medium mb-2">{tTreatment('organic')}</h3>
                 <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
                   {results.disease.treatment.organic.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>{getLocalizedProperty(item, locale)}</li>
                   ))}
                 </ul>
               </div>
               
               <div>
-                <h3 className="font-medium mb-2">Conventional Treatment</h3>
+                <h3 className="font-medium mb-2">{tTreatment('conventional')}</h3>
                 <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
                   {results.disease.treatment.conventional.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>{getLocalizedProperty(item, locale)}</li>
                   ))}
                 </ul>
               </div>
@@ -169,39 +182,39 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Leaf className="h-5 w-5 text-green-600" />
-                        Organic Medicine Options
+                        {tMedicine('organicOptions')}
                       </CardTitle>
-                      <CardDescription>Natural treatment solutions with minimal environmental impact</CardDescription>
+                      <CardDescription>{tMedicine('organicDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
                       {results.disease.medicine.organic.map((medicine, index) => (
                         <div key={index} className="border rounded-lg overflow-hidden">
                           <div className="relative h-48">
-                            <Image 
+                            <Image
                               src={medicine.image}
-                              alt={medicine.name}
+                              alt={getLocalizedProperty(medicine.name, locale)}
                               fill
                               className="object-cover"
                             />
                           </div>
                           <div className="p-4">
-                            <h4 className="font-medium mb-2">{medicine.name}</h4>
+                            <h4 className="font-medium mb-2">{getLocalizedProperty(medicine.name, locale)}</h4>
                             <div className="grid gap-2 text-sm">
-                              <p><span className="font-medium">Active Ingredient:</span> {medicine.active_ingredient}</p>
-                              <p><span className="font-medium">Application:</span> {medicine.application}</p>
-                              <p><span className="font-medium">Frequency:</span> {medicine.frequency}</p>
-                              <p><span className="font-medium">Waiting Period:</span> {medicine.waiting_period}</p>
+                              <p><span className="font-medium">{tMedicine('activeIngredient')}:</span> {getLocalizedProperty(medicine.active_ingredient, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('application')}:</span> {getLocalizedProperty(medicine.application, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('frequency')}:</span> {getLocalizedProperty(medicine.frequency, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('waitingPeriod')}:</span> {getLocalizedProperty(medicine.waiting_period, locale)}</p>
                               <div className="flex items-start gap-2 text-yellow-600 dark:text-yellow-400">
                                 <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                <p><span className="font-medium">Precautions:</span> {medicine.precautions}</p>
+                                <p><span className="font-medium">{tMedicine('precautions')}:</span> {getLocalizedProperty(medicine.precautions, locale)}</p>
                               </div>
                               <div className="flex items-start gap-2 text-red-600 dark:text-red-400">
                                 <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                <p><span className="font-medium">Avoid:</span> {medicine.avoid}</p>
+                                <p><span className="font-medium">{tMedicine('avoid')}:</span> {getLocalizedProperty(medicine.avoid, locale)}</p>
                               </div>
                               <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
                                 <Clock className="h-4 w-4" />
-                                <p><span className="font-medium">Expiry:</span> {medicine.expiry}</p>
+                                <p><span className="font-medium">{tMedicine('expiry')}:</span> {getLocalizedProperty(medicine.expiry, locale)}</p>
                               </div>
                             </div>
                           </div>
@@ -214,39 +227,39 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Beaker className="h-5 w-5 text-blue-600" />
-                        Conventional Medicine Options
+                        {tMedicine('conventionalOptions')}
                       </CardTitle>
-                      <CardDescription>Chemical-based treatments for severe cases</CardDescription>
+                      <CardDescription>{tMedicine('conventionalDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
                       {results.disease.medicine.conventional.map((medicine, index) => (
                         <div key={index} className="border rounded-lg overflow-hidden">
                           <div className="relative h-48">
-                            <Image 
+                            <Image
                               src={medicine.image}
-                              alt={medicine.name}
+                              alt={getLocalizedProperty(medicine.name, locale)}
                               fill
                               className="object-cover"
                             />
                           </div>
                           <div className="p-4">
-                            <h4 className="font-medium mb-2">{medicine.name}</h4>
+                            <h4 className="font-medium mb-2">{getLocalizedProperty(medicine.name, locale)}</h4>
                             <div className="grid gap-2 text-sm">
-                              <p><span className="font-medium">Active Ingredient:</span> {medicine.active_ingredient}</p>
-                              <p><span className="font-medium">Application:</span> {medicine.application}</p>
-                              <p><span className="font-medium">Frequency:</span> {medicine.frequency}</p>
-                              <p><span className="font-medium">Waiting Period:</span> {medicine.waiting_period}</p>
+                              <p><span className="font-medium">{tMedicine('activeIngredient')}:</span> {getLocalizedProperty(medicine.active_ingredient, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('application')}:</span> {getLocalizedProperty(medicine.application, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('frequency')}:</span> {getLocalizedProperty(medicine.frequency, locale)}</p>
+                              <p><span className="font-medium">{tMedicine('waitingPeriod')}:</span> {getLocalizedProperty(medicine.waiting_period, locale)}</p>
                               <div className="flex items-start gap-2 text-yellow-600 dark:text-yellow-400">
                                 <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                <p><span className="font-medium">Precautions:</span> {medicine.precautions}</p>
+                                <p><span className="font-medium">{tMedicine('precautions')}:</span> {getLocalizedProperty(medicine.precautions, locale)}</p>
                               </div>
                               <div className="flex items-start gap-2 text-red-600 dark:text-red-400">
                                 <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                <p><span className="font-medium">Avoid:</span> {medicine.avoid}</p>
+                                <p><span className="font-medium">{tMedicine('avoid')}:</span> {getLocalizedProperty(medicine.avoid, locale)}</p>
                               </div>
                               <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
                                 <Clock className="h-4 w-4" />
-                                <p><span className="font-medium">Expiry:</span> {medicine.expiry}</p>
+                                <p><span className="font-medium">{tMedicine('expiry')}:</span> {getLocalizedProperty(medicine.expiry, locale)}</p>
                               </div>
                             </div>
                           </div>
@@ -257,16 +270,16 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                 </div>
               ) : (
                 <div className="p-4 border rounded-md">
-                  <p className="text-sm text-muted-foreground">No medicine recommendations available for this condition.</p>
+                  <p className="text-sm text-muted-foreground">{tMedicine('noRecommendations')}</p>
                 </div>
               )}
             </TabsContent>
             
             <TabsContent value="prevention" className="p-4 border rounded-md mt-2">
-              <h3 className="font-medium mb-2">Prevention Tips</h3>
+              <h3 className="font-medium mb-2">{tPrevention('tips')}</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
                 {results.disease.prevention.map((item, index) => (
-                  <li key={index}>{item}</li>
+                  <li key={index}>{getLocalizedProperty(item, locale)}</li>
                 ))}
               </ul>
             </TabsContent>
@@ -275,7 +288,7 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
       </div>
       
       <div className="border-t pt-4">
-        <Button className="w-full">View Detailed Treatment Guide</Button>
+        <Button className="w-full">{t('viewDetailedGuide')}</Button>
       </div>
     </div>
   );

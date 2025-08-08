@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Upload, X, Camera } from 'lucide-react';
 import ScanResults from '@/components/scan/scan-results';
+import { useTranslations } from 'next-intl';
 
 const ScanForm = () => {
+  const t = useTranslations('scanForm');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -127,7 +129,7 @@ const ScanForm = () => {
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="plant-image">Upload Plant Image</Label>
+          <Label htmlFor="plant-image">{t('uploadPlantImage')}</Label>
           
           {!selectedImage ? (
             <div className="border-2 border-dashed rounded-lg p-6 text-center">
@@ -138,28 +140,28 @@ const ScanForm = () => {
                 onChange={handleImageChange}
                 className="hidden"
               />
-              <Label 
-                htmlFor="plant-image" 
+              <Label
+                htmlFor="plant-image"
                 className="flex flex-col items-center justify-center h-32 cursor-pointer"
               >
                 <Upload className="h-10 w-10 text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground mb-1">
-                  Drag and drop an image, or click to browse
+                  {t('dragAndDrop')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Supports JPG, PNG, WEBP (max 10MB)
+                  {t('supportedFormats')}
                 </p>
               </Label>
               
               <div className="mt-4 flex justify-center">
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => document.getElementById("plant-image")?.click()}
                   className="gap-2"
                 >
                   <Camera className="h-4 w-4" />
-                  Select Image
+                  {t('selectImage')}
                 </Button>
               </div>
             </div>
@@ -168,7 +170,7 @@ const ScanForm = () => {
               <div className="relative aspect-video">
                 <Image
                   src={selectedImage}
-                  alt="Selected plant"
+                  alt={t('selectedPlant')}
                   fill
                   className="object-cover"
                 />
@@ -188,18 +190,18 @@ const ScanForm = () => {
         </div>
         
         {selectedImage && !results && (
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className="w-full"
             disabled={isLoading}
           >
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Analyzing Image...
+                {t('analyzingImage')}
               </>
             ) : (
-              "Analyze Plant"
+              t('analyzePlant')
             )}
           </Button>
         )}

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { getLocalizedProperty } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 const foods = [
   {
@@ -50,6 +52,8 @@ const foods = [
 ];
 
 const PopularHealthyFoods = () => {
+  const locale = useLocale();
+  
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold tracking-tight mb-6">Popular Healthy Foods</h2>
@@ -57,44 +61,44 @@ const PopularHealthyFoods = () => {
         {foods.map((food, index) => (
           <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
             <div className="relative h-48">
-              <Image 
-                src={food.image} 
-                alt={food.name}
+              <Image
+                src={food.image}
+                alt={getLocalizedProperty(food.name, locale)}
                 fill
                 className="object-cover"
               />
               <div className="absolute top-2 left-2">
                 <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
-                  {food.category}
+                  {getLocalizedProperty(food.category, locale)}
                 </Badge>
               </div>
             </div>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-2">{food.name}</h3>
-              
+              <h3 className="text-xl font-semibold mb-2">{getLocalizedProperty(food.name, locale)}</h3>
+
               <div className="mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground mb-1">Key Benefits:</h4>
                 <div className="flex flex-wrap gap-1">
                   {food.benefits.map((benefit, idx) => (
                     <Badge key={idx} variant="outline" className="text-xs">
-                      {benefit}
+                      {getLocalizedProperty(benefit, locale)}
                     </Badge>
                   ))}
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <h4 className="text-sm font-medium text-muted-foreground mb-1">Key Nutrients:</h4>
                 <div className="flex flex-wrap gap-1">
                   {food.nutrients.map((nutrient, idx) => (
                     <span key={idx} className="text-xs bg-muted px-2 py-1 rounded-full">
-                      {nutrient}
+                      {getLocalizedProperty(nutrient, locale)}
                     </span>
                   ))}
                 </div>
               </div>
-              
-              <Link href={`/foods/${food.name.toLowerCase()}`}>
+
+              <Link href={`/foods/${getLocalizedProperty(food.name, locale).toLowerCase()}`}>
                 <Button variant="outline" size="sm" className="w-full">
                   View Details
                 </Button>

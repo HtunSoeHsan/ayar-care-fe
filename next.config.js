@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export',
+const withNextIntl = require('next-intl/plugin')();
+
+const config = withNextIntl({
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -8,10 +8,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.pexels.com',
         port: '',
-        pathname: '/photos/**',
-      },
-    ],
-  },
-};
+        pathname: '/**'
+      }
+    ]
+  }
+});
 
-module.exports = nextConfig;
+console.log('Next.js Config:', JSON.stringify(config, null, 2));
+
+module.exports = config;

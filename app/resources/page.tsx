@@ -4,8 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Book, Video, FileText, Users } from 'lucide-react';
+import { getLocalizedProperty } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 export default function ResourcesPage() {
+  const locale = useLocale();
+  
   return (
     <div className="container py-12 space-y-12">
       <div className="text-center max-w-3xl mx-auto">
@@ -70,20 +74,20 @@ export default function ResourcesPage() {
               ].map((article, index) => (
                 <Card key={index} className="overflow-hidden">
                   <div className="relative h-48">
-                    <Image 
-                      src={article.image} 
-                      alt={article.title}
+                    <Image
+                      src={article.image}
+                      alt={getLocalizedProperty(article.title, locale)}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs bg-muted px-2 py-1 rounded-full">{article.category}</span>
-                      <span className="text-xs text-muted-foreground">{article.readTime}</span>
+                      <span className="text-xs bg-muted px-2 py-1 rounded-full">{getLocalizedProperty(article.category, locale)}</span>
+                      <span className="text-xs text-muted-foreground">{getLocalizedProperty(article.readTime, locale)}</span>
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{article.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{article.description}</p>
+                    <h3 className="text-xl font-semibold mb-2">{getLocalizedProperty(article.title, locale)}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{getLocalizedProperty(article.description, locale)}</p>
                     <Link href={`/resources/articles/${index}`}>
                       <Button variant="outline" size="sm">Read Article</Button>
                     </Link>
@@ -127,9 +131,9 @@ export default function ResourcesPage() {
               ].map((video, index) => (
                 <Card key={index} className="overflow-hidden">
                   <div className="relative h-48">
-                    <Image 
-                      src={video.image} 
-                      alt={video.title}
+                    <Image
+                      src={video.image}
+                      alt={getLocalizedProperty(video.title, locale)}
                       fill
                       className="object-cover"
                     />
@@ -139,12 +143,12 @@ export default function ResourcesPage() {
                       </div>
                     </div>
                     <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium">
-                      {video.duration}
+                      {getLocalizedProperty(video.duration, locale)}
                     </div>
                   </div>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">{video.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{video.description}</p>
+                    <h3 className="text-xl font-semibold mb-2">{getLocalizedProperty(video.title, locale)}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{getLocalizedProperty(video.description, locale)}</p>
                     <Link href={`/resources/videos/${index}`}>
                       <Button variant="outline" size="sm">Watch Video</Button>
                     </Link>
@@ -198,8 +202,8 @@ export default function ResourcesPage() {
                     <div className="mb-4">
                       <Icon className="h-10 w-10 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{guide.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{guide.description}</p>
+                    <h3 className="text-xl font-semibold mb-2">{getLocalizedProperty(guide.title, locale)}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{getLocalizedProperty(guide.description, locale)}</p>
                     <Link href={`/resources/guides/${index}`}>
                       <Button variant="outline" size="sm">Download PDF</Button>
                     </Link>

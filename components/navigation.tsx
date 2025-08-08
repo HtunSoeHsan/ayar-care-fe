@@ -3,21 +3,24 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Leaf, Search, Home, Book, LineChart, Menu, X } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 const Navigation = () => {
+  const t = useTranslations('navigation');
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const routes = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/scan', label: 'Scan Plant', icon: Leaf },
-    { href: '/search', label: 'Healthy Foods', icon: Search },
-    { href: '/resources', label: 'Resources', icon: Book },
-    { href: '/dashboard', label: 'Dashboard', icon: LineChart },
+    { href: '/', label: t('home'), icon: Home },
+    { href: '/scan', label: t('scan'), icon: Leaf },
+    { href: '/search', label: t('search'), icon: Search },
+    { href: '/resources', label: t('resources'), icon: Book },
+    { href: '/dashboard', label: t('dashboard'), icon: LineChart },
   ];
 
   return (
@@ -53,6 +56,7 @@ const Navigation = () => {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ModeToggle />
           <Button
             variant="ghost"
@@ -88,6 +92,10 @@ const Navigation = () => {
                 </Link>
               );
             })}
+            <div className="flex items-center justify-between pt-4">
+              <span className="text-sm text-muted-foreground">Language</span>
+              <LanguageSwitcher />
+            </div>
           </nav>
         </div>
       )}

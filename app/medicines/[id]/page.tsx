@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
+import {
   ArrowLeft,
   Leaf,
   Beaker,
@@ -23,6 +23,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getLocalizedProperty } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 // Using the same medicine data from the list page
 // In a real app, this would come from an API or database
@@ -87,6 +89,7 @@ export async function generateStaticParams() {
 export default async function MedicineDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const medicine = allMedicines.find(m => m.id === id);
+  const locale = useLocale();
 
   if (!medicine) {
     return (
@@ -128,7 +131,7 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
         <div className="relative aspect-square rounded-lg overflow-hidden border">
           <Image
             src={medicine.image}
-            alt={medicine.name}
+            alt={getLocalizedProperty(medicine.name, locale)}
             fill
             className="object-cover"
           />
@@ -136,8 +139,8 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
 
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{medicine.name}</h1>
-            <p className="text-lg text-muted-foreground">{medicine.description}</p>
+            <h1 className="text-3xl font-bold mb-2">{getLocalizedProperty(medicine.name, locale)}</h1>
+            <p className="text-lg text-muted-foreground">{getLocalizedProperty(medicine.description, locale)}</p>
           </div>
 
           <Card>
@@ -150,15 +153,15 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
             <CardContent className="grid gap-2">
               <div className="flex justify-between py-2 border-b">
                 <span className="font-medium">Application Frequency</span>
-                <span>{medicine.frequency}</span>
+                <span>{getLocalizedProperty(medicine.frequency, locale)}</span>
               </div>
               <div className="flex justify-between py-2 border-b">
                 <span className="font-medium">Waiting Period</span>
-                <span>{medicine.waiting_period}</span>
+                <span>{getLocalizedProperty(medicine.waiting_period, locale)}</span>
               </div>
               <div className="flex justify-between py-2">
                 <span className="font-medium">Expiry</span>
-                <span>{medicine.expiry}</span>
+                <span>{getLocalizedProperty(medicine.expiry, locale)}</span>
               </div>
             </CardContent>
           </Card>
@@ -175,14 +178,14 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
                 <AlertTriangle className="h-5 w-5 mt-0.5 text-red-500" />
                 <div>
                   <p className="font-medium">Precautions</p>
-                  <p className="text-sm text-muted-foreground">{medicine.precautions}</p>
+                  <p className="text-sm text-muted-foreground">{getLocalizedProperty(medicine.precautions, locale)}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-5 w-5 mt-0.5 text-red-500" />
                 <div>
                   <p className="font-medium">Things to Avoid</p>
-                  <p className="text-sm text-muted-foreground">{medicine.avoid}</p>
+                  <p className="text-sm text-muted-foreground">{getLocalizedProperty(medicine.avoid, locale)}</p>
                 </div>
               </div>
             </CardContent>
@@ -205,7 +208,7 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
                   <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm flex-shrink-0">
                     {index + 1}
                   </span>
-                  <span>{instruction}</span>
+                  <span>{getLocalizedProperty(instruction, locale)}</span>
                 </li>
               ))}
             </ul>
@@ -224,7 +227,7 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
               {medicine.benefits.map((benefit, index) => (
                 <li key={index} className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  {benefit}
+                  {getLocalizedProperty(benefit, locale)}
                 </li>
               ))}
             </ul>
@@ -243,7 +246,7 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
               {medicine.common_uses.map((use, index) => (
                 <li key={index} className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-primary" />
-                  {use}
+                  {getLocalizedProperty(use, locale)}
                 </li>
               ))}
             </ul>
@@ -260,19 +263,19 @@ export default async function MedicineDetailPage({ params }: { params: Promise<{
           <CardContent className="space-y-3">
             <div>
               <p className="font-medium">Suitable For</p>
-              <p className="text-sm text-muted-foreground">{medicine.suitable_for.join(', ')}</p>
+              <p className="text-sm text-muted-foreground">{medicine.suitable_for.map(item => getLocalizedProperty(item, locale)).join(', ')}</p>
             </div>
             <div>
               <p className="font-medium">Environmental Impact</p>
-              <p className="text-sm text-muted-foreground">{medicine.environmental_impact}</p>
+              <p className="text-sm text-muted-foreground">{getLocalizedProperty(medicine.environmental_impact, locale)}</p>
             </div>
             <div>
               <p className="font-medium">Certification</p>
-              <p className="text-sm text-muted-foreground">{medicine.certification}</p>
+              <p className="text-sm text-muted-foreground">{getLocalizedProperty(medicine.certification, locale)}</p>
             </div>
             <div>
               <p className="font-medium">Storage</p>
-              <p className="text-sm text-muted-foreground">{medicine.storage}</p>
+              <p className="text-sm text-muted-foreground">{getLocalizedProperty(medicine.storage, locale)}</p>
             </div>
           </CardContent>
         </Card>
