@@ -10,7 +10,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, AlertTriangle, DownloadCloud, Share2, Leaf, Beaker, Clock, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, DownloadCloud, Share2, Leaf, Beaker, Clock, AlertCircle, ChevronRight } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -21,6 +21,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { getLocalizedProperty } from '@/lib/utils';
 import { useLocale } from 'next-intl';
+import { DiseaseResult, MultilingualText } from '@/lib/api-service';
 
 interface Medicine {
   name: string;
@@ -34,9 +35,38 @@ interface Medicine {
   image: string;
 }
 
+interface DetectedDisease {
+  classIndex: number;
+  name: string;
+  description: string;
+  symptoms?: string[];
+  plantType?: string;
+  treatments?: {
+    name: string;
+    description: string;
+    steps: string[];
+  }[];
+  detection: {
+    confidence: string;
+    imageUrl?: string;
+    detectedAt?: Date;
+  };
+  prevention?: string[];
+  cause?: string;
+  medicine?: {
+    organic: Medicine[];
+    conventional: Medicine[];
+  };
+  treatment?: {
+    organic: string[];
+    conventional: string[];
+  };
+}
+
 interface ScanResultsProps {
   results: {
-    disease: {
+    data?: DetectedDisease[];
+    disease?: {
       name: string;
       confidence: number;
       description: string;
@@ -62,14 +92,47 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
   const tPrevention = useTranslations('scanResults.prevention');
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedDisease, setSelectedDisease] = useState<DetectedDisease | null>(null);
   
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.9) return "bg-green-500/10 text-green-500";
-    if (confidence >= 0.7) return "bg-yellow-500/10 text-yellow-500";
+  // Handle multiple disease format or single disease format
+  const diseases = results.data || [];
+  const legacyDisease = results.disease;
+  
+  // Set the first disease as selected by default if available and no selection yet
+  useState(() => {
+    if (!selectedDisease && diseases.length > 0) {
+      setSelectedDisease(diseases[0]);
+    }
+  });
+  
+  const getConfidenceColor = (confidence: number | string) => {
+    const numConfidence = typeof confidence === 'string' ? parseFloat(confidence) : confidence;
+    if (numConfidence >= 0.9) return "bg-green-500/10 text-green-500";
+    if (numConfidence >= 0.7) return "bg-yellow-500/10 text-yellow-500";
     return "bg-red-500/10 text-red-500";
   };
   
-  const confidenceColor = getConfidenceColor(results.disease.confidence);
+  const getConfidenceText = (confidence: number | string) => {
+    if (typeof confidence === 'string') {
+      return confidence;
+    }
+    return `${Math.round(confidence * 100)}%`;
+  };
+  
+  // Get the current disease to display
+  const currentDisease = selectedDisease || (legacyDisease ? {
+    name: legacyDisease.name,
+    description: legacyDisease.description,
+    detection: { confidence: `${legacyDisease.confidence}` },
+    cause: legacyDisease.cause,
+    medicine: legacyDisease.medicine,
+    treatment: legacyDisease.treatment,
+    prevention: legacyDisease.prevention
+  } : null);
+  
+  const confidenceColor = currentDisease ? 
+    getConfidenceColor(currentDisease.detection?.confidence || legacyDisease?.confidence || 0) : 
+    "bg-gray-500/10 text-gray-500";
   
   // Localize disease name and description
   const localizedDiseaseName = getLocalizedProperty(results.disease.name, locale);
@@ -107,6 +170,7 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
         )}
         
         <div className="space-y-4">
+<<<<<<< Updated upstream
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Badge
@@ -171,12 +235,144 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                   {results.disease.treatment.conventional.map((item, index) => (
                     <li key={index}>{getLocalizedProperty(item, locale)}</li>
                   ))}
-                </ul>
+=======
+          {/* Top 5 results list */}
+          {diseases.length > 0 && (
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-medium mb-3">Top Detection Results</h3>
+              <div className="space-y-2">
+                {diseases.slice(0, 5).map((disease, index) => {
+                  const isSelected = selectedDisease && disease.classIndex === selectedDisease.classIndex;
+                  const confidence = parseFloat(disease.detection.confidence);
+                  const confidenceClass = getConfidenceColor(confidence);
+                  
+                  return (
+                    <div 
+                      key={disease.classIndex} 
+                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer hover:bg-accent/50 ${isSelected ? 'bg-accent' : ''}`}
+                      onClick={() => setSelectedDisease(disease)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={confidenceClass}>
+                          {getConfidenceText(disease.detection.confidence)}
+                        </Badge>
+                        <span className="font-medium">{disease.name}</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  );
+                })}
               </div>
-            </TabsContent>
+            </div>
+          )}
+          
+          {/* Selected disease details */}
+          {currentDisease && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Badge 
+                  variant="outline" 
+                  className={confidenceColor}
+                >
+                  {getConfidenceText(currentDisease.detection?.confidence || legacyDisease?.confidence || 0)} confidence
+                </Badge>
+                
+                {parseFloat(currentDisease.detection?.confidence || '0') >= 0.85 || (legacyDisease && legacyDisease.confidence >= 0.85) ? (
+                  <Badge variant="outline" className="bg-green-500/10 text-green-500">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    High confidence
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500">
+                    <AlertTriangle className="h-3 w-3 mr-1" />
+                    Medium confidence
+                  </Badge>
+                )}
+              </div>
+              
+              <h2 className="text-2xl font-bold mb-1">{currentDisease.name}</h2>
+              <p className="text-sm text-muted-foreground">{currentDisease.description}</p>
+            </div>
+          )}
+          
+          {currentDisease && (
+            <Tabs defaultValue="overview" onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-4">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="treatment">Treatment</TabsTrigger>
+                <TabsTrigger value="medicine">Medicine</TabsTrigger>
+                <TabsTrigger value="prevention">Prevention</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="p-4 border rounded-md mt-2">
+                {currentDisease.cause && (
+                  <>
+                    <h3 className="font-medium mb-2">Cause</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{currentDisease.cause}</p>
+                  </>
+                )}
+                
+                <h3 className="font-medium mb-2">Symptoms</h3>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
+                  {currentDisease.symptoms ? (
+                    currentDisease.symptoms.map((symptom, index) => (
+                      <li key={index}>{symptom}</li>
+                    ))
+                  ) : (
+                    <>
+                      <li>Brown spots with concentric rings on leaves</li>
+                      <li>Yellowing around the lesions</li>
+                      <li>Lower leaves are affected first</li>
+                      <li>Infected leaves may drop</li>
+                      <li>Spots may appear on stems and fruits</li>
+                    </>
+                  )}
+>>>>>>> Stashed changes
+                </ul>
+              </TabsContent>
+              
+              <TabsContent value="treatment" className="p-4 border rounded-md mt-2">
+                {currentDisease.treatment && (
+                  <>
+                    <div className="mb-4">
+                      <h3 className="font-medium mb-2">Organic Treatment</h3>
+                      <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
+                        {currentDisease.treatment.organic.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium mb-2">Conventional Treatment</h3>
+                      <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
+                        {currentDisease.treatment.conventional.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
+                
+                {currentDisease.treatments && (
+                  <div>
+                    {currentDisease.treatments.map((treatment, index) => (
+                      <div key={index} className="mb-4">
+                        <h3 className="font-medium mb-2">{treatment.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-2">{treatment.description}</p>
+                        <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
+                          {treatment.steps.map((step, stepIndex) => (
+                            <li key={stepIndex}>{step}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
             <TabsContent value="medicine" className="mt-2">
-              {results.disease.medicine ? (
+              {currentDisease?.medicine ? (
                 <div className="grid gap-4">
                   <Card>
                     <CardHeader>
@@ -187,7 +383,7 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                       <CardDescription>{tMedicine('organicDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
-                      {results.disease.medicine.organic.map((medicine, index) => (
+                      {currentDisease.medicine.organic.map((medicine, index) => (
                         <div key={index} className="border rounded-lg overflow-hidden">
                           <div className="relative h-48">
                             <Image
@@ -232,7 +428,7 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
                       <CardDescription>{tMedicine('conventionalDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
-                      {results.disease.medicine.conventional.map((medicine, index) => (
+                      {currentDisease.medicine.conventional.map((medicine, index) => (
                         <div key={index} className="border rounded-lg overflow-hidden">
                           <div className="relative h-48">
                             <Image
@@ -278,12 +474,21 @@ const ScanResults = ({ results, image }: ScanResultsProps) => {
             <TabsContent value="prevention" className="p-4 border rounded-md mt-2">
               <h3 className="font-medium mb-2">{tPrevention('tips')}</h3>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-4">
+<<<<<<< Updated upstream
                 {results.disease.prevention.map((item, index) => (
                   <li key={index}>{getLocalizedProperty(item, locale)}</li>
                 ))}
+=======
+                {currentDisease.prevention ? currentDisease.prevention.map((item, index) => (
+                  <li key={index}>{item}</li>
+                )) : (
+                  <li>No prevention tips available for this condition.</li>
+                )}
+>>>>>>> Stashed changes
               </ul>
             </TabsContent>
           </Tabs>
+          )}
         </div>
       </div>
       

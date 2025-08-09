@@ -5,26 +5,79 @@
 // Define the base URL for API requests
 const API_URL = 'http://localhost:5000/api';
 
+// Multilingual object interface
+export interface MultilingualText {
+  en: string;
+  mm: string;
+}
+
+// Medicine interface
+export interface Medicine {
+  name: MultilingualText;
+  active_ingredient: MultilingualText;
+  application: MultilingualText;
+  frequency: MultilingualText;
+  precautions: MultilingualText;
+  waiting_period: MultilingualText;
+  expiry: MultilingualText;
+  avoid: MultilingualText;
+  image: string;
+}
+
 // Plant disease scan result interface
 export interface DiseaseResult {
   status: 'healthy' | 'diseased';
   disease?: {
-    name: string;
-    scientific_name: string;
-    description: string;
-    cause: string;
+    name: MultilingualText;
+    scientific_name: MultilingualText;
+    description: MultilingualText;
+    cause: MultilingualText;
     treatment: {
-      organic: string[];
-      conventional: string[];
+      organic: MultilingualText[];
+      conventional: MultilingualText[];
     };
-    prevention: string[];
-    severity: string;
-    spread_rate: string;
+    prevention: MultilingualText[];
+    severity: MultilingualText;
+    spread_rate: MultilingualText;
+    symptoms: MultilingualText[];
+    medicine?: {
+      organic: Medicine[];
+      conventional: Medicine[];
+    };
   };
   confidence: number;
-  message?: string;
+  message?: MultilingualText;
   timestamp: string;
   filename: string;
+}
+
+// Plant care guide interface
+export interface PlantCareGuide {
+  id: string;
+  plant_name: MultilingualText;
+  plant_type: MultilingualText;
+  description: MultilingualText;
+  care_instructions: {
+    watering: MultilingualText;
+    sunlight: MultilingualText;
+    soil: MultilingualText;
+    fertilizing: MultilingualText;
+    pruning: MultilingualText;
+    temperature: MultilingualText;
+    humidity: MultilingualText;
+  };
+  common_problems: {
+    name: MultilingualText;
+    symptoms: MultilingualText[];
+    solutions: MultilingualText[];
+  }[];
+  seasonal_care: {
+    season: MultilingualText;
+    instructions: MultilingualText;
+  }[];
+  difficulty_level: MultilingualText;
+  growth_time: MultilingualText;
+  image?: string;
 }
 
 // Service for handling API requests
@@ -71,6 +124,45 @@ export const ApiService = {
       return await response.json();
     } catch (error) {
       console.error('Error fetching diseases:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get plant care guides
+   * @returns Promise with the plant care guides
+   */
+  async getPlantCareGuides(): Promise<PlantCareGuide[]> {
+    try {
+      const response = await fetch(`${API_URL}/plant-care-guides`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch plant care guides');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching plant care guides:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get a specific plant care guide by ID
+   * @param id - The ID of the plant care guide
+   * @returns Promise with the plant care guide
+   */
+  async getPlantCareGuide(id: string): Promise<PlantCareGuide> {
+    try {
+      const response = await fetch(`${API_URL}/plant-care-guides/${id}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch plant care guide');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching plant care guide:', error);
       throw error;
     }
   },

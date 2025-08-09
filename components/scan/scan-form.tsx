@@ -5,16 +5,18 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Upload, X, Camera } from 'lucide-react';
-import ScanResults from '@/components/scan/scan-results';
+import { Loader2, Upload, X, Camera, AlertCircle } from 'lucide-react';
+import ScanResults from '@/components/scan/scan-results-clean';
 import { useTranslations } from 'next-intl';
+import { ApiService, DiseaseResult } from '@/lib/api-service';
 
 const ScanForm = () => {
   const t = useTranslations('scanForm');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<any | null>(null);
+  const [results, setResults] = useState<DiseaseResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,91 +40,17 @@ const ScanForm = () => {
     if (!imageFile) return;
     
     setIsLoading(true);
+    setError(null);
     
-    // Simulate API call to Flask backend
-    setTimeout(() => {
-      const mockResults = {
-        disease: {
-          name: "Tomato Early Blight",
-          confidence: 0.92,
-          description: "Early blight is a fungal disease that affects tomato plants, causing brown spots with concentric rings on leaves, stems, and fruits.",
-          cause: "The fungus Alternaria solani causes early blight. It thrives in warm, humid conditions and can overwinter in soil and plant debris.",
-          medicine: {
-            organic: [
-              {
-                name: "Neem Oil",
-                active_ingredient: "Azadirachtin",
-                application: "Foliar spray",
-                frequency: "Every 7-14 days",
-                precautions: "Apply in early morning or evening. Avoid spraying during hot sunny conditions.",
-                waiting_period: "0 days",
-                expiry: "2 years from manufacturing date",
-                avoid: "Do not apply when temperatures exceed 85°F (29°C)",
-                image: "https://images.pexels.com/photos/6231763/pexels-photo-6231763.jpeg"
-              },
-              {
-                name: "Copper Fungicide",
-                active_ingredient: "Copper octanoate",
-                application: "Mix 0.5-2.0 tablespoons per gallon of water",
-                frequency: "Every 7-10 days",
-                precautions: "Wear protective equipment. May cause leaf burn if applied in hot weather.",
-                waiting_period: "0 days",
-                expiry: "3 years from manufacturing date",
-                avoid: "Do not mix with other chemicals or apply during rain",
-                image: "https://images.pexels.com/photos/5503270/pexels-photo-5503270.jpeg"
-              }
-            ],
-            conventional: [
-              {
-                name: "Chlorothalonil",
-                active_ingredient: "Chlorothalonil",
-                application: "Foliar spray",
-                frequency: "Every 7-10 days",
-                precautions: "Wear protective equipment. Do not apply in windy conditions.",
-                waiting_period: "7 days",
-                expiry: "4 years from manufacturing date",
-                avoid: "Do not apply within 7 days of harvest. Avoid contact with skin and eyes.",
-                image: "https://images.pexels.com/photos/6231713/pexels-photo-6231713.jpeg"
-              },
-              {
-                name: "Mancozeb",
-                active_ingredient: "Manganese ethylenebis",
-                application: "2-3 tablespoons per gallon of water",
-                frequency: "Every 7-10 days",
-                precautions: "Use protective equipment. Apply in calm conditions.",
-                waiting_period: "5 days",
-                expiry: "3 years from manufacturing date",
-                avoid: "Do not use on crops within 5 days of harvest. Avoid inhalation.",
-                image: "https://images.pexels.com/photos/6231715/pexels-photo-6231715.jpeg"
-              }
-            ]
-          },
-          treatment: {
-            organic: [
-              "Remove and destroy infected plant parts",
-              "Apply copper-based fungicides",
-              "Use neem oil spray once a week",
-              "Mulch around plants to prevent soil splash"
-            ],
-            conventional: [
-              "Apply chlorothalonil-based fungicide",
-              "Use mancozeb fungicide as directed",
-              "Rotate with different fungicides to prevent resistance"
-            ]
-          },
-          prevention: [
-            "Practice crop rotation",
-            "Space plants for good air circulation",
-            "Water at the base of plants to keep foliage dry",
-            "Remove plant debris at the end of the season",
-            "Use disease-resistant varieties when available"
-          ]
-        }
-      };
-      
-      setResults(mockResults);
+    try {
+      const result = await ApiService.scanPlant(imageFile);
+      setResults(result);
+    } catch (error: any) {
+      console.error('Error during plant scan:', error);
+      setError(error.message || 'Failed to analyze plant. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -206,6 +134,13 @@ const ScanForm = () => {
           </Button>
         )}
       </form>
+      
+      {error && (
+        <div className="flex items-center gap-2 p-4 border border-destructive/20 bg-destructive/10 rounded-lg text-destructive">
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
       
       {results && <ScanResults results={results} image={selectedImage} />}
     </div>
