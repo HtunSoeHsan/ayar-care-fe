@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Leaf, Search, Home, Book, LineChart, Menu, X } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import ProfileDropdown from './ProfileDropdown';
 
 const Navigation = () => {
   const t = useTranslations('navigation');
@@ -58,6 +59,7 @@ const Navigation = () => {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ModeToggle />
+          <ProfileDropdown />
           <Button
             variant="ghost"
             size="icon"
