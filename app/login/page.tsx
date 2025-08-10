@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -29,7 +29,7 @@ export default function LoginPage() {
       if (res.ok) {
         localStorage.setItem('token', data.data.token);
         router.push('/dashboard');
-      } else {http://localhost:3000/api/auth/login
+      } else {
         alert(data.message || 'Login failed');
       }
     } catch (err) {
@@ -74,7 +74,7 @@ export default function LoginPage() {
               <Link href="/register">Create Account</Link>
             </Button>
             <Button variant="secondary" className="w-full" asChild>
-              <Link href="http://localhost:3000/api/auth/google">Sign in with Google</Link>
+              <Link href={`${process.env.NEXT_PUBLIC_API_BASE}/auth/google`}>Sign in with Google</Link>
             </Button>
           </CardFooter>
         </form>

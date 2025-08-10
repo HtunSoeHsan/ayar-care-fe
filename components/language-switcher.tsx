@@ -48,7 +48,13 @@ export function LanguageSwitcher() {
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent 
+        align="end" 
+        side="bottom"
+        sideOffset={8}
+        className="z-[110]"
+        forceMount
+      >
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}

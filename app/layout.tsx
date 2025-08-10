@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navigation from '@/components/navigation';
 import Footer from '@/components/footer';
+import ChatbotProvider from '@/components/chat/chatbot-provider';
 import { getLocale, getMessages } from 'next-intl/server';
 
 const inter = Inter({
@@ -38,11 +39,13 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex flex-col min-h-screen">
-              <Navigation />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <ChatbotProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navigation />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </ChatbotProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -193,39 +193,33 @@
   },
   "scanResults": {
     "title": "Scan Results",
-    "share": "Share",
-    "save": "Save",
-    "confidence": "Confidence",
-    "highConfidence": "High confidence",
-    "mediumConfidence": "Medium confidence",
-    "cause": "Cause",
-    "symptoms": "Symptoms",
     "overview": "Overview",
-    "treatment": {
-      "title": "Treatment",
-      "organic": "Organic Treatment",
-      "conventional": "Conventional Treatment"
+    "treatments": "Treatments",
+    "recommendations": "Recommendations",
+    "symptoms": "Symptoms",
+    "plantType": "Plant Type",
+    "confidence": "Confidence",
+    "status": "Status",
+    "detectionTime": "Detection Time",
+    "description": "Description",
+    "treatmentSteps": "Treatment Steps",
+    "preventionTips": "Prevention Tips",
+    "careRecommendations": "Care Recommendations"
+  },
+  "chatbot": {
+    "title": "Plant Disease AI",
+    "welcome": "Hello! I'm your Plant Disease AI Specialist. I can help you with disease prevention, treatment recommendations, and plant care advice. What would you like to know?",
+    "suggestions": {
+      "prevention": "How to prevent plant diseases?",
+      "symptoms": "What are common plant symptoms?",
+      "care": "Best practices for plant care",
+      "treatment": "Treatment options for diseases"
     },
-    "medicine": {
-      "title": "Medicine",
-      "organicOptions": "Organic Medicine Options",
-      "organicDescription": "Natural treatment solutions with minimal environmental impact",
-      "conventionalOptions": "Conventional Medicine Options",
-      "conventionalDescription": "Chemical-based treatments for severe cases",
-      "activeIngredient": "Active Ingredient",
-      "application": "Application",
-      "frequency": "Frequency",
-      "waitingPeriod": "Waiting Period",
-      "precautions": "Precautions",
-      "avoid": "Avoid",
-      "expiry": "Expiry",
-      "noRecommendations": "No medicine recommendations available for this condition."
-    },
-    "prevention": {
-      "title": "Prevention",
-      "tips": "Prevention Tips"
-    },
-    "viewDetailedGuide": "View Detailed Treatment Guide"
+    "placeholder": "Ask about plant diseases, prevention, or care...",
+    "send": "Send",
+    "online": "Online",
+    "minimize": "Minimize",
+    "close": "Close"
   },
   "diseaseDisplay": {
     "diseaseNotFound": "Disease not found",

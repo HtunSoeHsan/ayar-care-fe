@@ -119,3 +119,23 @@
 .text-center-container {
   @apply text-center max-w-3xl mx-auto;
 }
+
+/* Mobile dropdown positioning fixes */
+@media (max-width: 768px) {
+  /* Ensure dropdowns render above mobile navigation */
+  [data-radix-popper-content-wrapper] {
+    z-index: 120 !important;
+  }
+  
+  /* Fix mobile dropdown positioning */
+  .mobile-dropdown-fix {
+    position: relative;
+    z-index: 110;
+  }
+  
+  /* Ensure proper stacking context for mobile */
+  .mobile-controls {
+    position: relative;
+    z-index: 105;
+  }
+}

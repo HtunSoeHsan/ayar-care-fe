@@ -25,7 +25,7 @@ const Navigation = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-[100] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
@@ -56,14 +56,27 @@ const Navigation = () => {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Desktop controls */}
+        <div className="hidden md:flex items-center gap-2">
           <LanguageSwitcher />
           <ModeToggle />
           <ProfileDropdown />
+        </div>
+
+        {/* Mobile controls */}
+        <div className="md:hidden flex items-center gap-2 relative mobile-controls">
+          <div className="mobile-dropdown-fix">
+            <LanguageSwitcher />
+          </div>
+          <div className="mobile-dropdown-fix">
+            <ModeToggle />
+          </div>
+          <div className="mobile-dropdown-fix">
+            <ProfileDropdown />
+          </div>
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -73,7 +86,7 @@ const Navigation = () => {
 
       {/* Mobile navigation */}
       {isMenuOpen && (
-        <div className="md:hidden container mx-auto px-4 py-4 pb-6 border-b">
+        <div className="md:hidden container mx-auto px-4 py-4 pb-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <nav className="grid gap-4">
             {routes.map((route) => {
               const Icon = route.icon;
@@ -94,10 +107,6 @@ const Navigation = () => {
                 </Link>
               );
             })}
-            <div className="flex items-center justify-between pt-4">
-              <span className="text-sm text-muted-foreground">Language</span>
-              <LanguageSwitcher />
-            </div>
           </nav>
         </div>
       )}
